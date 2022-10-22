@@ -26,7 +26,7 @@ def init_table():
 
 def check(git):
     init = '''
-    SELECT COUNT(*) FROM public.gits WHERE git = %s;'''
+    SELECT COUNT(*) FROM public.gits WHERE git = '%s';'''
     with connection.cursor() as cursor:
         cursor.execute(init,(git))
     return cursor.fetchone()[0]
@@ -40,21 +40,21 @@ def insert(git, chatid):
 
 def update(git, chatid):
     init = '''
-    UPDATE public.gits SET chat_id = %s WHERE git = %s'''
+    UPDATE public.gits SET chat_id = %s WHERE git = '%s';'''
     with connection.cursor() as cursor:
         cursor.execute(init,(git, chatid))
     connection.commit()
 
 def delete(chatid):
     init = '''
-    DELETE FROM public.gits WHERE chat_id = %s'''
+    DELETE FROM public.gits WHERE chat_id = '%s';'''
     with connection.cursor() as cursor:
         cursor.execute(init,(chatid))
     connection.commit()
 
 def chat_search(git):
     init = '''
-    SELECT chat_id FROM public.gits WHERE git = %s'''
+    SELECT chat_id FROM public.gits WHERE git = '%s';'''
     with connection.cursor() as cursor:
         cursor.execute(init,(git))
     return cursor.fetchone()[0]

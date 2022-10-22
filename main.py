@@ -45,7 +45,7 @@ def update(git, chatid):
         cursor.execute(init,(chatid, git))
     connection.commit()
 
-def delete(chatid):
+def delete_row(chatid):
     init = '''
     DELETE FROM public.gits WHERE chat_id = %s;'''
     with connection.cursor() as cursor:
@@ -163,7 +163,7 @@ def add(message):
 
 @bot.message_handler(commands=["delete"])
 def delete(message):
-    delete(message.chat.id)
+    delete_row(message.chat.id)
     bot.send_message(message.chat.id,"Notifications have been discontinued")
 
 @bot.message_handler(content_types="text")

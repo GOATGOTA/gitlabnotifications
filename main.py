@@ -196,7 +196,9 @@ def redirect_message():
 @server.route('/gitlab', methods=['POST'])
 def add_message_back():
     content = request.get_json()
-    bot.send_message(chat_search(content['project']['git_http_url']), message(content), parse_mode="HTML")
+    chat = chat_search(content['project']['git_http_url'])
+    if chat != None:
+        bot.send_message(chat, message(content), parse_mode="HTML")
 
 
 

@@ -175,15 +175,15 @@ def message_reply(message):
     if answer == True:
         if ".git" in message.text and "https" in message.text:
             count = check(message.text)
+            answer = False
             if count == 0:
                 insert(message.text, message.chat.id)
                 bot.send_message(message.chat.id,"Your repository was successfully linked\nWeebhook url: https://gitlabnotifications.herokuapp.com/gitlab\nTo stop notifications send command /delete")
             if count == 1:
                 update(message.text, message.chat.id)
                 bot.send_message(message.chat.id,"Your repository was successfully updated\nWeebhook url: https://gitlabnotifications.herokuapp.com/gitlab\nTo stop notifications send command /delete")
-        elif not validators.url(message.text):
+        else:
             bot.send_message(message.chat.id,"Incorrect repository HTTPS")
-        answer = False
 
 @server.route(f"/{BOT_TOKEN}", methods = ["POST"])
 def redirect_message():

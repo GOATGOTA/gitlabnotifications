@@ -161,6 +161,11 @@ def start(message):
 def add(message):
     bot.reply_to(message, f"Enter your HTTPS repository which ends with .git" )
 
+@bot.message_handler(commands=["delete"])
+def delete(message):
+    delete(message.chat.id)
+    bot.send_message(message.chat.id,"Notifications have been discontinued")
+
 @bot.message_handler(content_types="text")
 def message_reply(message):
     if ".git" in message.text and "https" in message.text:
@@ -173,11 +178,6 @@ def message_reply(message):
             bot.send_message(message.chat.id,"Your repository was successfully updated\nTo stop notifications send command /delete")
     else:
         bot.send_message(message.chat.id,"Incorrect repository HTTPS")
-
-@bot.message_handler(commands=["delete"])
-def delete(message):
-    delete(message.chat.id)
-    bot.send_message(message.chat.id,"Notifications have been discontinued")
 
 
 @server.route(f"/{BOT_TOKEN}", methods = ["POST"])

@@ -4,37 +4,60 @@ from config import *
 import requests
 import os
 import telebot
+import psycopg2
 
 bot = telebot.TeleBot(BOT_TOKEN)
 server = Flask(__name__)
 logger = telebot.logger
 logger.setLevel(logging.DEBUG)
 
+try:
+    connection = psycopg2.connect(host=host,user=user,password=password,database=db_name)
 
-def send_telegram(text: str, chatid: str ):
-    global token
-    token = token
-    url = "https://api.telegram.org/bot"
-    channel_id = chatid
-    url += token
-    method = url + "/sendMessage"
-    if channel_id != None:
-        r = requests.post(method, data={
-             "chat_id": channel_id,
-             "text": text,
-             "parse_mode" : "HTML"
-        })
+except Exception as _ex:
+    print('Error')
 
-        if r.status_code != 200:
-            raise Exception("post_text error")
+def init_table():
+    init = """
+    CREATE TABLE IF NOT EXISTS public.gits (git varchar(128), chat_id varchar(64));"""
+    with connection.cursor() as cursor:
+        cursor.execute(init)
+    connection.commit()
 
+def check(git):
+    init = '''
+    SELECT COUNT(*) FROM public.gits WHERE git = %s;'''
+    with connection.cursor() as cursor:
+        cursor.execute(init,(git))
+    return cursor.fetchone()[0]
 
-# Создание базы данных
+def insert(git, chatid):
+    init = '''
+    INSERT INTO public.gits (git, chat_id) VALUES (%s,%s)'''
+    with connection.cursor() as cursor:
+        cursor.execute(init,(git, chatid))
+    connection.commit()
 
+def update(git, chatid):
+    init = '''
+    UPDATE public.gits SET chat_id = %s WHERE git = %s'''
+    with connection.cursor() as cursor:
+        cursor.execute(init,(git, chatid))
+    connection.commit()
 
+def delete(chatid):
+    init = '''
+    DELETE FROM public.gits WHERE chat_id = %s'''
+    with connection.cursor() as cursor:
+        cursor.execute(init,(chatid))
+    connection.commit()
 
-# Взаимодействия с базой данных
-
+def chat_search(git):
+    init = '''
+    SELECT chat_id FROM public.gits WHERE git = %s'''
+    with connection.cursor() as cursor:
+        cursor.execute(init,(git))
+    return cursor.fetchone()[0]
 
 
 
@@ -152,7 +175,30 @@ def message(content):
 @bot.message_handler(commands=["start"])
 def start(message):
     username = message.from_user.username
-    bot.reply_to(message, f"Hello, {username}!\n Напиши")
+    bot.reply_to(message, f"Hello, {username}!\nTo add GitLab repository notifications send command /add")
+
+@bot.message_handler(commands=["add"])
+def add(message):
+    bot.reply_to(message, f"Enter your HTTPS repository which ends with .git" )
+
+@bot.message_handler(content_types="text")
+def message_reply(message):
+    if [".git","https"] in message.text:
+        count = check(message.text)
+        if count == 0:
+            insert(message.text, message.chat.id)
+            bot.send_message(message.chat.id,"Your repository was successfully linked\nTo stop notifications send command /delete")
+        if count == 1:
+            update(message.text, message.chat.id)
+            bot.send_message(message.chat.id,"Your repository was successfully updated\nTo stop notifications send command /delete")
+    else:
+        bot.send_message(message.chat.id,"Incorrect repository HTTPS")
+
+@bot.message_handler(commands=["delete"])
+def delete(message):
+    delete(message.chat.id)
+    bot.send_message(message.chat.id,"Notifications have been discontinued")
+
 
 @server.route(f"/{BOT_TOKEN}", methods = ["POST"])
 def redirect_message():
@@ -162,11 +208,10 @@ def redirect_message():
     return "!", 200
 
 
-# @server.route('/gitlab', methods=['POST'])
-# def add_message_back():
-#     content = request.get_json()
-#     send_telegram(message(content), chat_search(content['project']['git_http_url']))
-#     return content
+@server.route('/gitlab', methods=['POST'])
+def add_message_back():
+    content = request.get_json()
+    bot.send_message(chat_search(content['project']['git_http_url']), message(content), parse_mode="HTML")
 
 
 

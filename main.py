@@ -58,7 +58,7 @@ def chat_search(git):
     SELECT chat_id FROM public.gits WHERE git = %s;'''
     with connection.cursor() as cursor:
         cursor.execute(init,(git,))
-        return cursor.fetchone()[0]
+        return cursor.fetchone()
 
 
 
@@ -198,7 +198,7 @@ def add_message_back():
     content = request.get_json()
     chat = chat_search(content['project']['git_http_url'])
     if chat != None:
-        bot.send_message(chat, message(content), parse_mode="HTML")
+        bot.send_message(chat[0], message(content), parse_mode="HTML")
 
 
 

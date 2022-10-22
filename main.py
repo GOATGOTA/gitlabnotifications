@@ -163,7 +163,7 @@ def add(message):
 
 @bot.message_handler(commands=["delete"])
 def delete(message):
-    delete_row(message.chat.id)
+    delete_row(str(message.chat.id))
     bot.send_message(message.chat.id,"Notifications have been discontinued")
 
 @bot.message_handler(content_types="text")

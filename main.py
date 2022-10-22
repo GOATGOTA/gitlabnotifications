@@ -183,7 +183,7 @@ def add(message):
 
 @bot.message_handler(content_types="text")
 def message_reply(message):
-    if [".git","https"] in message.text:
+    if ".git" in message.text and "https" in message.text:
         count = check(message.text)
         if count == 0:
             insert(message.text, message.chat.id)

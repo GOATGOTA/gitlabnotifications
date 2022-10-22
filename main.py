@@ -199,7 +199,7 @@ def add_message_back():
     chat = chat_search(content['project']['git_http_url'])
     if chat != None:
         bot.send_message(chat[0], message(content), parse_mode="HTML")
-
+    return content
 
 
 if __name__ == '__main__':

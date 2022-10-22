@@ -26,10 +26,10 @@ def init_table():
 
 def check(git):
     init = '''
-    SELECT COUNT(*) FROM public.gits WHERE git = '%s';'''
+    SELECT COUNT(*) FROM public.gits WHERE git = %s;'''
     with connection.cursor() as cursor:
-        cursor.execute(init,(git))
-    return cursor.fetchone()[0]
+        cursor.execute(init,(git,))
+        return cursor.fetchone()[0]
 
 def insert(git, chatid):
     init = '''
@@ -40,24 +40,24 @@ def insert(git, chatid):
 
 def update(git, chatid):
     init = '''
-    UPDATE public.gits SET chat_id = %s WHERE git = '%s';'''
+    UPDATE public.gits SET chat_id = %s WHERE git = %s;'''
     with connection.cursor() as cursor:
-        cursor.execute(init,(git, chatid))
+        cursor.execute(init,(chatid, git))
     connection.commit()
 
 def delete(chatid):
     init = '''
-    DELETE FROM public.gits WHERE chat_id = '%s';'''
+    DELETE FROM public.gits WHERE chat_id = %s;'''
     with connection.cursor() as cursor:
-        cursor.execute(init,(chatid))
+        cursor.execute(init,(chatid,))
     connection.commit()
 
 def chat_search(git):
     init = '''
-    SELECT chat_id FROM public.gits WHERE git = '%s';'''
+    SELECT chat_id FROM public.gits WHERE git = %s;'''
     with connection.cursor() as cursor:
-        cursor.execute(init,(git))
-    return cursor.fetchone()[0]
+        cursor.execute(init,(git,))
+        return cursor.fetchone()[0]
 
 
 
@@ -150,26 +150,6 @@ def message(content):
 
 
 # Endpoints
-
-
-# @server.route('/tg', methods = ['POST'])
-# def tg_webhook():
-#     content = request.get_json()
-#     if 'message' in content:
-#         if content['message']['text'] == '/start':
-#             text = 'Привет, это бот уведомлений GitLab. Давай познакомимся с моим функционалом:\n/add git_http_url - привязка уведомлений к этому чату;\n/update git_http_url - перепривязка уведомлений к этому чату;\n/remove git_http_url - прекращение уведомлений;'
-#             send_telegram(text, content['message']['chat']['id']) 
-
-#         if content['message']['text'].split(' ')[0] == '/add' and '.git' in content['message']['text']:
-#             add_git(content['message']['text'].split(' ')[1], content['message']['chat']['id'])
-
-#         if content['message']['text'].split(' ')[0] == '/update' and '.git' in content['message']['text']:
-#             update_git(content['message']['text'].split(' ')[1], content['message']['chat']['id'])
-
-#         if content['message']['text'].split(' ')[0] == '/remove' and '.git' in content['message']['text']:
-#             remove_git(content['message']['text'].split(' ')[1], content['message']['chat']['id'])
-
-#     return content
 
 
 @bot.message_handler(commands=["start"])

@@ -96,18 +96,18 @@ def message(content):
                     label.append(mark['title'])
                 label = ', '.join(label)
             if label != ' ':
-                name = ' #' + str(content['object_attributes']['iid']) + ' ' + content['object_attributes']['title'] + ' (' +  label + ')'
+                name = '#' + str(content['object_attributes']['iid']) + ' ' + content['object_attributes']['title'] + ' (' +  label + ')'
             else:
-                name = ' #' + str(content['object_attributes']['iid']) + ' ' + content['object_attributes']['title']
+                name = '#' + str(content['object_attributes']['iid']) + ' ' + content['object_attributes']['title']
             if 'action' in content['object_attributes']:
                 if content['object_attributes']['action'] == 'open':
-                    event = '<b>' + content['user']['username'] + 'opened ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue</a> ' + name +  '</b>'
+                    event = '<b>' + content['user']['username'] + ' opened ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue</a> ' + name +  '</b>'
                 if content['object_attributes']['action'] == 'close':
-                    event = '<b>' + content['user']['username'] + 'closed ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue</a> ' + name +  '</b>'
+                    event = '<b>' + content['user']['username'] + ' closed ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue</a> ' + name +  '</b>'
                 if content['object_attributes']['action'] == 'update':
-                    event = '<b>' + content['user']['username'] + 'updated ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue</a> ' + name +  '</b>'
+                    event = '<b>' + content['user']['username'] + ' updated ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue</a> ' + name +  '</b>'
                 if content['object_attributes']['action'] == 'reopen':
-                    event = '<b>' + content['user']['username'] + 'reopened ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue</a> ' + name +  '</b>'
+                    event = '<b>' + content['user']['username'] + ' reopened ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue</a> ' + name +  '</b>'
         return event
     if content['object_kind'] == 'note':
         event = '<b>' + content['user']['name'] + 'left comment in '
@@ -125,6 +125,7 @@ def message(content):
         return result
     if content['object_kind'] == 'merge_request':
         event = '<a href=\'' + content['object_attributes']['url'] + '\'>merge request</a> ' + content['object_attributes']['source_branch'] + ' -> ' + content['object_attributes']['target_branch'] + ' by ' + content['user']['name'] + '</b>\n'
+        title = content['object_attributes']['title'] + '\n'
         description = '<b>' + content['user']['username'] + ':</b> ' + content['object_attributes']['description']
         
         if 'action' in content['object_attributes']:
@@ -144,7 +145,7 @@ def message(content):
                 event = '<b>' + 'Merged ' + event
         else:
             event = '<b>' + event
-        result = event + description
+        result = event + title + description
         return result
 
     return ''

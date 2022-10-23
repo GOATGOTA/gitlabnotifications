@@ -90,11 +90,15 @@ def message(content):
         event = '<b>Issue by ' + content['user']['username'] + '</b>\n'
         if 'object_attributes' in content:
             label = ' '
-            if len(content['object_attributes']['labels']) != 0:    
+            if len(content['object_attributes']['labels']) != 0:
+                label = []
                 for mark in content['object_attributes']['labels']:
-                    label += '#'                        
-                    label += mark['title'] + ' '
-            name = '#' + str(content['object_attributes']['iid']) + ' ' + content['object_attributes']['title'] + '</b>' + label + '\n'
+                    label.append(mark['title'])
+                label = ', '.join(label)
+            if label != ' ':
+                name = ' #' + str(content['object_attributes']['iid']) + ' ' + content['object_attributes']['title'] + ' (' +  label + ')'
+            else:
+                name = ' #' + str(content['object_attributes']['iid']) + ' ' + content['object_attributes']['title']
             if 'action' in content['object_attributes']:
                 if content['object_attributes']['action'] == 'open':
                     event = '<b>' + content['user']['username'] + 'opened ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue</a> ' + name +  '</b>'

@@ -96,21 +96,21 @@ def message(content):
                     label.append(mark['title'])
                 label = ', '.join(label)
             if label != ' ':
-                name = '#' + str(content['object_attributes']['iid']) + ' ' + content['object_attributes']['title'] + ' (' +  label + ')'
+                name = content['object_attributes']['title'] + ' (' +  label + ')'
             else:
-                name = '#' + str(content['object_attributes']['iid']) + ' ' + content['object_attributes']['title']
+                name = content['object_attributes']['title']
             if 'action' in content['object_attributes']:
                 if content['object_attributes']['action'] == 'open':
-                    event = '<b>' + content['user']['username'] + ' opened ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue</a> ' + name +  '</b>'
+                    event = '<b>' + content['user']['username'] + ' opened ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue' + ' #' + str(content['object_attributes']['iid']) + '</a> ' + name +  '</b>'
                 if content['object_attributes']['action'] == 'close':
-                    event = '<b>' + content['user']['username'] + ' closed ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue</a> ' + name +  '</b>'
+                    event = '<b>' + content['user']['username'] + ' closed ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue' + ' #' + str(content['object_attributes']['iid']) + '</a> ' + name +  '</b>'
                 if content['object_attributes']['action'] == 'update':
-                    event = '<b>' + content['user']['username'] + ' updated ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue</a> ' + name +  '</b>'
+                    event = '<b>' + content['user']['username'] + ' updated ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue' + ' #' + str(content['object_attributes']['iid']) + '</a> ' + name +  '</b>'
                 if content['object_attributes']['action'] == 'reopen':
-                    event = '<b>' + content['user']['username'] + ' reopened ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue</a> ' + name +  '</b>'
+                    event = '<b>' + content['user']['username'] + ' reopened ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue' + ' #' + str(content['object_attributes']['iid']) + '</a> ' + name +  '</b>'
         return event
     if content['object_kind'] == 'note':
-        event = '<b>' + content['user']['name'] + 'left comment in '
+        event = '<b>' + content['user']['name'] + ' left comment in '
         number = ''
         name = content['object_attributes']['noteable_type'].lower()
         if content['object_attributes']['noteable_type'] == 'Issue':
@@ -136,7 +136,7 @@ def message(content):
             if content['object_attributes']['action'] == 'update':
                 event = '<b>' + 'Updated ' + event
             if content['object_attributes']['action'] == 'reopen':
-                event = '<b>' + 'Reopen ' + event
+                event = '<b>' + 'Reopened ' + event
             if content['object_attributes']['action'] == 'approved':
                 event = '<b>' + 'Approved ' + event
             if content['object_attributes']['action'] == 'unapproved':

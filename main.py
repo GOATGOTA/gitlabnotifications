@@ -116,7 +116,7 @@ def message(content):
         if content['object_attributes']['noteable_type'] == 'Issue':
             name += ' #' + str(content['issue']['iid'])
         if content['object_attributes']['noteable_type'] == 'MergeRequest':
-            name += ' #' + str(content['issue']['iid'])
+            name += ' #' + str(content['merge_request']['iid'])
         event += '<a href=\'' + content['object_attributes']['url'] + '\'>' + name + '</a></b>\n'
         message = ''
         if 'note' in content['object_attributes']:

@@ -68,83 +68,79 @@ def chat_search(git):
 def message(content):
     result = ''
     if content['object_kind'] == 'push':
-        event = '🔥<b>Push в ' + content['project']['name'] + ' от ' + content['user_username'] + '</b>🔥\n'
-        user = '👶Пользователь: ' + content['user_name'] + '\n'
-        branch = '🌿Ветка: ' + '<b>' + content['ref'] + '</b>\n'
+        event = '<b>' + content['user_name'] + ' pushed to ' + content['project']['name'] + '</b>\n'
+        branch = 'Related branch: ' + content['ref']
         if content['before'] == '0000000000000000000000000000000000000000':
-            branch = '➕' + branch
+            branch = branch + ' (<b>new</b>)'
         if content['after'] == '0000000000000000000000000000000000000000':
-            branch = '➖' + branch
+            branch = branch + ' (<b>removed</b>)'
+        branch += '\n'
         pool = ''
         
         if len(content['commits']) != 0:
             pool += '\n' + '<b>' + str(len(content['commits'])) + '</b>' + ' Commit(s):\n'
             for elem in content['commits']:
                 pool += '\n'
-                pool += '🔗Ссылка: ' + '<a href=\'' + elem['url'] + '\'><b>тык</b></a>' + '\n' + '✉️Сообщение: ' + elem['message'].replace('\n\n', '. ').replace('\n', '') + '\n'
-                pool += '🟢Добавлено: ' + str(len(elem['added'])) + ' - 🟡Изменено: ' + str(len(elem['modified'])) + ' - 🔴Удалено: ' + str(len(elem['removed'])) + '\n'
+                pool += '<a href=\'' + elem['url'] + '\'><b>'+ elem['message'].replace('\n\n', '. ').replace('\n', '') + '</b></a>' + '\n'
+                pool += 'added: ' + str(len(elem['added'])) + ' - updated: ' + str(len(elem['modified'])) + ' - removed: ' + str(len(elem['removed'])) + '\n'
         result = event + user + branch + pool
         return result
+    
     if content['object_kind'] == 'issue':
-        event = '⚠️<b>Issue в ' + content['project']['name'] + ' от ' + content['user']['username'] + '</b>⚠️\n\n'
-        pool = ''
+        event = '<b>Issue by ' + content['user']['username'] + '</b>\n'
         if 'object_attributes' in content:
             label = ' '
             if len(content['object_attributes']['labels']) != 0:    
                 for mark in content['object_attributes']['labels']:
                     label += '#'                        
                     label += mark['title'] + ' '
-            name = '📢Issue: ' + '<b>№' + str(content['object_attributes']['iid']) + ' ' + content['object_attributes']['title'] + '</b>' + label + '\n'
-            url = '🔗Ссылка: ' + '<a href=\'' + content['object_attributes']['url'] + '\'><b>тык</b></a>'
-            status = '📊Статус: Unknown🤨\n'
+            name = '#' + str(content['object_attributes']['iid']) + ' ' + content['object_attributes']['title'] + '</b>' + label + '\n'
             if 'action' in content['object_attributes']:
                 if content['object_attributes']['action'] == 'open':
-                    status = '📊Статус: Открыт📖\n'
+                    event = '<b>' + content['user']['username'] + 'opened ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue</a> ' + name +  '</b>'
                 if content['object_attributes']['action'] == 'close':
-                    status = '📊Статус: Закрыт📕\n'
+                    event = '<b>' + content['user']['username'] + 'closed ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue</a> ' + name +  '</b>'
                 if content['object_attributes']['action'] == 'update':
-                    status = '📊Статус: Обновлён♻️\n'
+                    event = '<b>' + content['user']['username'] + 'updated ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue</a> ' + name +  '</b>'
                 if content['object_attributes']['action'] == 'reopen':
-                    status = '📊Статус: Переоткрыт🔄\n'
-            pool += name + status + url + '\n'
-        result = event + pool
-        return result
+                    event = '<b>' + content['user']['username'] + 'reopened ' + '<a href=\'' + content['object_attributes']['url'] + '\'>issue</a> ' + name +  '</b>'
+        return event
     if content['object_kind'] == 'note':
-        event = '📩<b>Комментарий в ' + content['project']['name'] +  ' от ' + content['user']['username'] + '</b>📩\n'
+        event = '<b>' + content['user']['name'] + 'left comment in '
         number = ''
+        name = content['object_attributes']['noteable_type'].lower()
         if content['object_attributes']['noteable_type'] == 'Issue':
-            number = ' #' + str(content['issue']['iid'])
+            name += ' #' + str(content['issue']['iid'])
         if content['object_attributes']['noteable_type'] == 'MergeRequest':
-            number = ' #' + str(content['merge_request']['iid'])
-        theme = '\nТема: ' + '<b>' + content['object_attributes']['noteable_type'] + number + '</b>\n'
-        url = '🔗Ссылка: ' + '<a href=\'' + content['object_attributes']['url'] + '\'><b>тык</b></a>'
+            name += ' #' + str(content['issue']['iid'])
+        event += '<a href=\'' + content['object_attributes']['url'] + '\'>' + name + '</a></b>\n'
         message = ''
         if 'note' in content['object_attributes']:
-            message = 'Комментарий: ' + content['object_attributes']['note'] + '\n'
-        result = event + theme + message + url
+            message = '<b>' + content['user']['username'] + ':</b> ' + content['object_attributes']['note'] + '\n'
+        result = event + message
         return result
     if content['object_kind'] == 'merge_request':
-        event = '⛑<b>Merge Request в ' + content['project']['name'] + ' от ' + content['user']['username'] + '</b>⛑\n'
-        from_to = '🌿Ветка: ' + '<b>' + content['object_attributes']['source_branch'] + ' -> ' + content['object_attributes']['target_branch'] + '</b>\n\n'
-        description = 'Описание: ' + content['object_attributes']['description'] + '\n'
-        url = '🔗Ссылка: ' + '<a href=\'' + content['object_attributes']['url'] + '\'><b>тык</b></a>' + '\n'
-        status = ''
+        event = '<a href=\'' + content['object_attributes']['url'] + '\'>merge request</a> ' + content['object_attributes']['source_branch'] + ' -> ' + content['object_attributes']['target_branch'] + ' by ' + content['user']['name'] + '</b>\n'
+        description = '<b>' + content['user']['username'] + ':</b> ' + content['object_attributes']['description']
+        
         if 'action' in content['object_attributes']:
             if content['object_attributes']['action'] == 'open':
-                status = '📊Статус: Открыт📖\n'
+                event = '<b>' + 'Opened ' + event
             if content['object_attributes']['action'] == 'close':
-                status = '📊Статус: Закрыт📕\n'
+                event = '<b>' + 'Closed ' + event
             if content['object_attributes']['action'] == 'update':
-                status = '📊Статус: Обновлён♻️\n'
+                event = '<b>' + 'Updated ' + event
             if content['object_attributes']['action'] == 'reopen':
-                status = '📊Статус: Переоткрыт🔄\n'
+                event = '<b>' + 'Reopen ' + event
             if content['object_attributes']['action'] == 'approved':
-                status = '📊Статус: Подтверждён🆗\n'
+                event = '<b>' + 'Approved ' + event
             if content['object_attributes']['action'] == 'unapproved':
-                status = '📊Статус: Отказан🙅‍♂️\n'
+                event = '<b>' + 'Unapproved ' + event
             if content['object_attributes']['action'] == 'merge':
-                status = '📊Статус: Поглощён😋\n'
-        result = event + from_to + description + status + url
+                event = '<b>' + 'Merged ' + event
+        else:
+            event = '<b>' + event
+        result = event + description
         return result
 
     return ''

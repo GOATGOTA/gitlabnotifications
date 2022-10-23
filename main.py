@@ -76,14 +76,14 @@ def message(content):
             branch = branch + ' (<b>removed</b>)'
         branch += '\n'
         pool = ''
-        
+
         if len(content['commits']) != 0:
             pool += '\n' + '<b>' + str(len(content['commits'])) + '</b>' + ' Commit(s):\n'
             for elem in content['commits']:
                 pool += '\n'
                 pool += '<a href=\'' + elem['url'] + '\'><b>'+ elem['message'].replace('\n\n', '. ').replace('\n', '') + '</b></a>' + '\n'
                 pool += 'added: ' + str(len(elem['added'])) + ' - updated: ' + str(len(elem['modified'])) + ' - removed: ' + str(len(elem['removed'])) + '\n'
-        result = event + user + branch + pool
+        result = event + branch + pool
         return result
     
     if content['object_kind'] == 'issue':

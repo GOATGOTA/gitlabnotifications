@@ -125,7 +125,7 @@ def message(content):
         return result
     if content['object_kind'] == 'merge_request':
         event = '<a href=\'' + content['object_attributes']['url'] + '\'>merge request</a> ' + content['object_attributes']['source_branch'] + ' -> ' + content['object_attributes']['target_branch'] + ' by ' + content['user']['name'] + '</b>\n'
-        title = content['object_attributes']['title'] + '\n'
+        title = '<b>Title:</b> ' + content['object_attributes']['title'] + '\n'
         description = '<b>' + content['user']['username'] + ':</b> ' + content['object_attributes']['description']
         
         if 'action' in content['object_attributes']:

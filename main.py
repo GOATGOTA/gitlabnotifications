@@ -124,27 +124,26 @@ def message(content):
         result = event + message
         return result
     if content['object_kind'] == 'merge_request':
-        event = '<a href=\'' + content['object_attributes']['url'] + '\'>merge request</a> ' + 'at ' + content['object_attributes']['source']['path_with_namespace'] + ' by ' + content['user']['name'] + '</b>\n'
-        title = '<b>Title:</b> ' + content['object_attributes']['title'] + '\n'
-        description = '<b>Megre:</b> ' + content['object_attributes']['source_branch'] + ' -> ' + content['object_attributes']['target_branch'] + '\n<b>' + content['user']['username'] + ':</b> ' + content['object_attributes']['description'] 
+        event = '<a href=\'' + content['object_attributes']['url'] + '\'>merge request</a> ' + 'at ' + '<a href=\'' + content['project']['url'] + '\'>/' + content['project']['path_with_namespace'] + '</a>:\n'
+        title = '<b>' + content['object_attributes']['title'] + '</b>\n'
+        description = '<b>Megre</b> ' + '<a href=\'' + content['object_attributes']['target']['url'] + '\'>' + content['object_attributes']['source_branch'] + ' -> ' + content['object_attributes']['target_branch'] + '</a>' + ' <b>with:</b>\n' + content['object_attributes']['description'] 
         
         if 'action' in content['object_attributes']:
             if content['object_attributes']['action'] == 'open':
-                event = '<b>' + 'Opened ' + event
+                event = '<b>' + content['user']['username'] + '</b' + ' opened ' + event
             if content['object_attributes']['action'] == 'close':
-                event = '<b>' + 'Closed ' + event
+                event = '<b>' + content['user']['username'] + '</b' + ' closed ' + event
             if content['object_attributes']['action'] == 'update':
-                event = '<b>' + 'Updated ' + event
+                event = '<b>' + content['user']['username'] + '</b' + ' updated ' + event
             if content['object_attributes']['action'] == 'reopen':
-                event = '<b>' + 'Reopened ' + event
+                eevent = '<b>' + content['user']['username'] + '</b' + ' reopened ' + event
             if content['object_attributes']['action'] == 'approved':
-                event = '<b>' + 'Approved ' + event
+                event = '<b>' + content['user']['username'] + '</b' + ' approved ' + event
             if content['object_attributes']['action'] == 'unapproved':
-                event = '<b>' + 'Unapproved ' + event
+                event = '<b>' + content['user']['username'] + '</b' + ' unapproved ' + event
             if content['object_attributes']['action'] == 'merge':
-                event = '<b>' + 'Merged ' + event
-        else:
-            event = '<b>' + event
+                event = '<b>' + content['user']['username'] + '</b' + ' merged ' + event
+
         result = event + title + description
         return result
 

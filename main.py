@@ -130,19 +130,19 @@ def message(content):
         
         if 'action' in content['object_attributes']:
             if content['object_attributes']['action'] == 'open':
-                event = '<b>' + content['user']['username'] + '</b' + ' opened ' + event
+                event = '<b>' + content['user']['username'] + '</b>' + ' opened ' + event
             if content['object_attributes']['action'] == 'close':
-                event = '<b>' + content['user']['username'] + '</b' + ' closed ' + event
+                event = '<b>' + content['user']['username'] + '</b>' + ' closed ' + event
             if content['object_attributes']['action'] == 'update':
-                event = '<b>' + content['user']['username'] + '</b' + ' updated ' + event
+                event = '<b>' + content['user']['username'] + '</b>' + ' updated ' + event
             if content['object_attributes']['action'] == 'reopen':
-                eevent = '<b>' + content['user']['username'] + '</b' + ' reopened ' + event
+                eevent = '<b>' + content['user']['username'] + '</b>' + ' reopened ' + event
             if content['object_attributes']['action'] == 'approved':
-                event = '<b>' + content['user']['username'] + '</b' + ' approved ' + event
+                event = '<b>' + content['user']['username'] + '</b>' + ' approved ' + event
             if content['object_attributes']['action'] == 'unapproved':
-                event = '<b>' + content['user']['username'] + '</b' + ' unapproved ' + event
+                event = '<b>' + content['user']['username'] + '</b>' + ' unapproved ' + event
             if content['object_attributes']['action'] == 'merge':
-                event = '<b>' + content['user']['username'] + '</b' + ' merged ' + event
+                event = '<b>' + content['user']['username'] + '</b>' + ' merged ' + event
 
         result = event + title + description
         return result

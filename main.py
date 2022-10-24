@@ -124,7 +124,7 @@ def message(content):
         result = event + message
         return result
     if content['object_kind'] == 'merge_request':
-        event = '<a href=\'' + content['object_attributes']['url'] + '\'>merge request</a> ' + 'at ' + '<a href=\'' + content['project']['url'] + '\'>' + content['project']['path_with_namespace'] + '</a>:\n'
+        event = '<a href=\'' + content['object_attributes']['url'] + '\'>merge request</a> ' + 'at ' + '<a href=\'' + content['project']['url'] + '\'>' + 'ff' + '</a>:\n'
         title = '<b>' + content['object_attributes']['title'] + '</b>\n'
         description = '<b>Megre</b> ' + '<a href=\'' + content['object_attributes']['target']['url'] + '\'>' + content['object_attributes']['source_branch'] + ' -> ' + content['object_attributes']['target_branch'] + '</a>' + ' <b>with:</b>\n' + content['object_attributes']['description'] 
         

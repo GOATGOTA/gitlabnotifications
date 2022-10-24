@@ -1,4 +1,4 @@
 # gitlabnotifications
-How to use manual
-Add bot in a group or start a personal dialogue
-Type command /start
+**How to use manual**
+____
+Add bot in a group or start a personal dialogue with command /start
